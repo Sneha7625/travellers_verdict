@@ -18,25 +18,14 @@ from urllib.parse import quote_plus
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 gemini_model = genai.GenerativeModel('models/gemini-1.5-flash-002')
 
-from flask import Flask, render_template, send_from_directory
-import os
+from flask import Flask, render_template
 
-# Set template_folder and static_folder manually
-app = Flask(__name__,
-            template_folder='../frontend',
-            static_folder='../frontend')
+app = Flask(__name__, static_folder="static", template_folder="frontend")
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+@app.route("/")
+def home():
+    return render_template("index.html")  # or return "Hello from Flask!"
 CORS(app)
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def serve(path):
-    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
-        return send_from_directory(app.static_folder, path)
-    else:
-        return send_from_directory(app.static_folder, 'index.html')
 
 # JWT Configuration
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'fallback_secret_key')
